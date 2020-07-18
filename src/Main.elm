@@ -1,12 +1,52 @@
-module Main exposing (main)
+module Main exposing
+    ( conf
+    , main
+    )
 
 import Browser
 import Browser.Navigation as Nav
+import Html.String
+import Html.String.Attributes
+import Html.String.Extra
 import Shared exposing (Flags)
 import Spa.Document as Document exposing (Document)
 import Spa.Generated.Pages as Pages
 import Spa.Generated.Route as Route exposing (Route)
+import Starter.ConfMain
+import Starter.ConfMeta
+import Starter.SnippetHtml
+import Starter.SnippetJavascript
 import Url exposing (Url)
+
+
+backgroundColor : { blue : number, green : number1, red : number2 }
+backgroundColor =
+    -- { red = 116, green = 222, blue = 165 }
+    { red = 38, green = 104, blue = 69 }
+
+
+conf : Starter.ConfMain.Conf
+conf =
+    { title = "elm-spa-example - A web site built with elm-spa and elm-starter"
+    , description = "This application has been bootstrapped with elm-spa and elm-starter."
+    , domain = "https://elm-spa-example.guupa.com"
+    , urls = [ "/", "/page-a", "/page-b" ]
+    , assetsToCache = []
+    , twitterSite = "lucamug"
+    , twitterHandle = "lucamug"
+    , themeColor =
+        "rgb("
+            ++ String.fromInt backgroundColor.red
+            ++ ","
+            ++ String.fromInt backgroundColor.green
+            ++ ","
+            ++ String.fromInt backgroundColor.blue
+            ++ ")"
+    , author = "Luca Mugnaini"
+    , snapshotFileName = "snapshot.jpg"
+    , snapshotWidth = 700
+    , snapshotHeight = 350
+    }
 
 
 main : Program Flags Model Msg

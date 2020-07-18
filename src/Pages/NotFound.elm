@@ -1,6 +1,7 @@
 module Pages.NotFound exposing (Model, Msg, Params, page)
 
 import Element exposing (..)
+import Element.Font as Font
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
 import Spa.Url exposing (Url)
@@ -33,6 +34,6 @@ view : Url Params -> Document Msg
 view { params } =
     { title = "404"
     , body =
-        [ text "Page not found"
+        [ el [ Font.size 32 ] <| text "Not Found"
         ]
     }

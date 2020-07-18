@@ -1,10 +1,8 @@
 module Pages.PageB exposing (Model, Msg, Params, page)
 
+import Components.Counter
 import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
 import Element.Font as Font
-import Element.Input as Input
 import Shared
 import Spa.Document exposing (Document)
 import Spa.Page as Page exposing (Page)
@@ -78,54 +76,19 @@ subscriptions model =
 -- VIEW
 
 
-color : { black : Color, cyan : Color }
-color =
-    { black = rgb255 0 0 0
-    , cyan = rgb255 127 209 185
-    }
-
-
-buttonAttrs : List (Attribute msg)
-buttonAttrs =
-    [ Border.rounded 60
-    , Background.color color.black
-    , Font.color color.cyan
-    , Font.size 30
-    , padding 30
-    ]
-
-
 view : Model -> Document Msg
 view model =
     { title = "PageB"
     , body =
-        [ text "Page B"
+        [ el [ Font.size 32 ] <| text "Page B"
+        , text "Another counter:"
         , el [ paddingXY 0 20 ] <|
-            column
-                [ Background.color color.cyan
-                , Border.rounded 60
-                , padding 30
-                ]
-                [ row
-                    [ spacing 20
-                    , width <| minimum 240 fill
-                    ]
-                    [ Input.button buttonAttrs
-                        { label = text "+1"
-                        , onPress = Just Increment
-                        }
-                    , Input.button (alignRight :: buttonAttrs)
-                        { label = text "-1"
-                        , onPress = Just Decrement
-                        }
-                    ]
-                , el
-                    [ Font.size 200
-                    , centerX
-                    ]
-                  <|
-                    text <|
-                        String.fromInt model.count
-                ]
+            Components.Counter.view
+                { bgColor = rgb255 65 169 208
+                , count = model.count
+                , fgColor = rgb255 0 0 0
+                , msgDecrement = Decrement
+                , msgIncrement = Increment
+                }
         ]
     }

@@ -1,41 +1,30 @@
-# new elm-spa project
-> More documentation at https://elm-spa.dev
+# elm-spa-example
 
-## local development
+Example of a website bootstrapped with `elm-spa` and `elm-starter`.
 
-You can get this site up and running with one command:
+* [`README-elm-spa.md`](README-elm-spa.md)
+* [`README-elm-starter.md`](https://github.com/lucamug/elm-starter)
+
+Compared to a regular `elm-starter` application, the commands have different name, to avoid conflicts with `elm-spa`:
 
 ```
-npm start
+$ npm run elm-starter:start
+$ npm run elm-starter:build
+$ npm run elm-starter:serverBuild
 ```
 
-### other commands to know
+Moreover you need to run an extra command during the build so in Netlify, for example, the settings are:
 
-There are a handful of commands in the [package.json](./package.json).
+* Build command `npm run build:elm-spa && npm run elm-starter:build`
+* Publish directory `elm-stuff/elm-starter-files/build`
 
-Command | Description
-:-- | :--
-`npm run dev` | Run a dev server and automatically build changes.
-`npm run test:watch` | Run tests as you code.
-`npm run build` | Build the site for production.
-`npm run test` | Run the test suite once, great for CI
+Also remember to build your application around a `div` that has `elm` as id.
 
+This because we need to remove that node before re-creating.
 
-## deploying
+Look for these two lines of code for more explanation:
 
-After you run `npm run build`, the contents of the `public` folder can be hosted as a static site. If you haven't hosted a static site before, I'd recommend using [Netlify](https://netlify.com) (it's free!)
-
-### using netlify
-
-Add a `netlify.toml` file next to this README, for standard SPA routing:
-
-```toml
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
 ```
- 
-__Build command:__ `npm run build`
-
-__Publish directory:__ `public`
+var node = document.getElementById('elm');
+if (node) { node.remove(); }
+```

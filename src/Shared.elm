@@ -10,6 +10,8 @@ module Shared exposing
 
 import Browser.Navigation exposing (Key)
 import Element exposing (..)
+import Element.Background as Background
+import Element.Border as Border
 import Element.Font as Font
 import Spa.Document exposing (Document)
 import Spa.Generated.Route as Route
@@ -61,6 +63,20 @@ subscriptions model =
 -- VIEW
 
 
+buttonAttrs : List (Attribute msg)
+buttonAttrs =
+    [ Border.widthEach { bottom = 2, left = 0, right = 0, top = 0 }
+    , Border.color <| rgba 0 0 0 0.2
+    , padding 6
+    , alignRight
+    ]
+
+
+linkAttrs : List (Attr decorative msg)
+linkAttrs =
+    [ Font.color <| rgb 1 1 1 ]
+
+
 view :
     { page : Document msg, toMsg : Msg -> msg }
     -> Model
@@ -68,14 +84,45 @@ view :
 view { page, toMsg } model =
     { title = page.title
     , body =
-        [ column [ padding 20, spacing 20, height fill ]
-            [ row [ spacing 20 ]
-                [ link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.Top, label = text "Homepage" }
-                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.PageA, label = text "Page A" }
-                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.PageB, label = text "Page B" }
-                , link [ Font.color (rgb 0 0.25 0.5), Font.underline ] { url = Route.toString Route.NotFound, label = text "Not found" }
+        [ column
+            [ spacing 30
+            , width fill
+            , Background.color <| rgb255 116 222 165
+            ]
+            [ el
+                [ padding 20
+                , width fill
+                , Background.color <| rgb255 38 104 69
                 ]
-            , column [ height fill ] page.body
+              <|
+                wrappedRow
+                    [ Font.color <| rgba 1 1 1 0.9
+                    , width fill
+                    , spacing 20
+                    ]
+                    [ el [ width <| px 100, height <| px 100 ] <| image [ width fill ] { description = "Logo", src = "/icons/512.png" }
+                    , column [ width fill, spacing 10 ]
+                        [ el [ Font.size 32, width fill ] <| text "elm-spa-example"
+                        , paragraph [ Font.size 16 ]
+                            [ text "Built with "
+                            , link linkAttrs { label = text "elm-spa", url = "https://www.elm-spa.dev/" }
+                            , text " and "
+                            , link linkAttrs { label = text "elm-starter", url = "https://github.com/lucamug/elm-starter" }
+                            , text "."
+                            ]
+                        ]
+                    , wrappedRow [ spacing 20, width fill ]
+                        [ link buttonAttrs { url = Route.toString Route.Top, label = text "Top" }
+                        , link buttonAttrs { url = Route.toString Route.PageA, label = text "Page A" }
+                        , link buttonAttrs { url = Route.toString Route.PageB, label = text "Page B" }
+                        ]
+                    ]
+            , column
+                [ height fill
+                , spacing 15
+                , paddingEach { top = 0, right = 30, bottom = 300, left = 30 }
+                ]
+                page.body
             ]
         ]
     }

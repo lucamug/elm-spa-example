@@ -6,6 +6,8 @@ module Spa.Document exposing
 
 import Browser
 import Element exposing (..)
+import Html
+import Html.Attributes
 
 
 type alias Document msg =
@@ -25,7 +27,30 @@ toBrowserDocument : Document msg -> Browser.Document msg
 toBrowserDocument doc =
     { title = doc.title
     , body =
-        [ Element.layout [ width fill, height fill ]
-            (column [ width fill, height fill ] doc.body)
+        [ Html.div
+            [ Html.Attributes.id "elm" ]
+            [ Html.node "style" [] [ Html.text css ]
+            , Html.a [ Html.Attributes.class "skip-link", Html.Attributes.href "#main" ]
+                [ Html.text "Skip to main" ]
+            , Element.layout [ width fill, height fill ]
+                (column [ width fill, height fill ] doc.body)
+            ]
         ]
     }
+
+
+css : String
+css =
+    """.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000000;
+  color: white;
+  padding: 8px;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+} """
