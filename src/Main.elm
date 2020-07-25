@@ -27,25 +27,8 @@ backgroundColor =
 
 conf : Starter.ConfMain.Conf
 conf =
-    { title = "elm-spa-example - A web site built with elm-spa and elm-starter"
-    , description = "This application has been bootstrapped with elm-spa and elm-starter."
-    , domain = "https://elm-spa-example.guupa.com"
-    , urls = [ "/", "/page-a", "/page-b" ]
+    { urls = [ "/", "/page-a", "/page-b" ]
     , assetsToCache = []
-    , twitterSite = "lucamug"
-    , twitterHandle = "lucamug"
-    , themeColor =
-        "rgb("
-            ++ String.fromInt backgroundColor.red
-            ++ ","
-            ++ String.fromInt backgroundColor.green
-            ++ ","
-            ++ String.fromInt backgroundColor.blue
-            ++ ")"
-    , author = "Luca Mugnaini"
-    , snapshotFileName = "snapshot.jpg"
-    , snapshotWidth = 700
-    , snapshotHeight = 350
     }
 
 

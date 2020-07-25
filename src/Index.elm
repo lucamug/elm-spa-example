@@ -18,10 +18,10 @@ index flags =
         [ lang "en" ]
         [ head []
             ([]
-                ++ [ title_ [] [ text <| Main.conf.title ]
-                   , meta [ charset "utf-8" ] []
-                   , meta [ name "author", content Main.conf.author ] []
-                   , meta [ name "description", content Main.conf.description ] []
+                ++ [ meta [ charset "utf-8" ] []
+                   , title_ [] [ text flags.nameLong ]
+                   , meta [ name "author", content flags.author ] []
+                   , meta [ name "description", content flags.description ] []
                    , meta [ name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no" ] []
                    , meta [ httpEquiv "x-ua-compatible", content "ie=edge" ] []
                    , link [ rel "icon", href (Starter.Icon.iconFileName 64) ] []
@@ -29,14 +29,14 @@ index flags =
                    , style_ []
                         [ text <| """
                             body 
-                                { background-color: """ ++ Main.conf.themeColor ++ """
+                                { background-color: """ ++ Starter.Flags.flagsToThemeColor flags ++ """
                                 ; font-family: 'IBM Plex Sans', helvetica, sans-serif
                                 ; margin: 0px;
                                 }""" ]
                    ]
                 ++ Starter.SnippetHtml.messagesStyle
-                ++ Starter.SnippetHtml.pwa Main.conf
-                ++ Starter.SnippetHtml.previewCards Main.conf
+                ++ Starter.SnippetHtml.pwa (Starter.Flags.flagsToThemeColor flags)
+                ++ Starter.SnippetHtml.previewCards flags Main.conf
             )
         , body [] <| htmlToReinject flags
         ]
@@ -52,17 +52,8 @@ htmlToReinject flags =
             else
                 Starter.SnippetHtml.messageEnableJavascriptForBetterExperience
            )
-        -- Initializing "window.ElmStarter" global object
-        ++ [ Html.String.Extra.script []
-                [ Html.String.textUnescaped <|
-                    Starter.SnippetJavascript.metaInfo
-                        { gitBranch = flags.gitBranch
-                        , gitCommit = flags.gitCommit
-                        , env = flags.env
-                        , version = flags.version
-                        }
-                ]
-           ]
+        -- Initializing "window.ElmStarter"
+        ++ [ script [] [ textUnescaped <| Starter.SnippetJavascript.metaInfo flags ] ]
         -- Loading Elm code
         ++ [ Html.String.Extra.script [ Html.String.Attributes.src "/elm.js" ] [] ]
         -- Elm finished to load, de-activating the "Loading..." message
@@ -88,11 +79,13 @@ htmlToReinject flags =
 
                         window.ElmApp = Elm.Main.init(
                             { flags:
-                                { commit: ElmStarter.commit
-                                , branch: ElmStarter.branch
-                                , env: ElmStarter.env
-                                , version: ElmStarter.version
-                                , versionElmStarter: ElmStarter.versionElmStarter
+                                
+                                // From package.jspn
+                                { starter : """
+                        ++ Starter.SnippetJavascript.metaInfoData flags
+                        ++ """ 
+                                
+                                // Others
                                 , width: window.innerWidth
                                 , height: window.innerHeight
                                 , languages: window.navigator.userLanguages || window.navigator.languages || []

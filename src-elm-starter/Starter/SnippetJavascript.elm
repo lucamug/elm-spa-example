@@ -1,6 +1,7 @@
 module Starter.SnippetJavascript exposing
     ( appWorkAlsoWithoutJS
     , metaInfo
+    , metaInfoData
     , portChangeMeta
     , portOnUrlChange
     , portPushUrl
@@ -10,6 +11,7 @@ module Starter.SnippetJavascript exposing
     )
 
 import Json.Encode
+import Starter.Flags
 
 
 selfInvoking : String -> String
@@ -17,25 +19,15 @@ selfInvoking code =
     "( function () {\"use strict\";\n" ++ code ++ "\n})();"
 
 
-metaInfo :
-    { gitBranch : String
-    , gitCommit : String
-    , env : String
-    , version : String
-    }
-    -> String
-metaInfo args =
-    let
-        metaInfoData =
-            Json.Encode.encode 4 <|
-                Json.Encode.object
-                    [ ( "commit", Json.Encode.string args.gitCommit )
-                    , ( "branch", Json.Encode.string args.gitBranch )
-                    , ( "env", Json.Encode.string args.env )
-                    , ( "version", Json.Encode.string args.version )
-                    ]
-    in
-    "window.ElmStarter = " ++ metaInfoData ++ ";"
+metaInfo : Starter.Flags.Flags -> String
+metaInfo flags =
+    "window.ElmStarter = " ++ metaInfoData flags ++ ";"
+
+
+metaInfoData : Starter.Flags.Flags -> String
+metaInfoData flags =
+    Json.Encode.encode 4 <|
+        Starter.Flags.flagsEncoder flags
 
 
 signature : String
@@ -139,12 +131,14 @@ portChangeMeta =
     """
 if (ElmApp && ElmApp.ports && ElmApp.ports.changeMeta) {
     ElmApp.ports.changeMeta.subscribe(function(args) {
-        var element = document.querySelector(args.querySelector);
-        if (element) {
-            if (args.type_ == "attribute") {
-                element.setAttribute(args.fieldName, args.content);
-            } else if (args.type_ == "property" && element[args.fieldName]) {
-                element[args.fieldName] = args.content;
+        if (args.querySelector !== "") {
+            var element = document.querySelector(args.querySelector);
+            if (element) {
+                if (args.type_ == "attribute") {
+                    element.setAttribute(args.fieldName, args.content);
+                } else if (args.type_ == "property" && element[args.fieldName]) {
+                    element[args.fieldName] = args.content;
+                }
             }
         }
     });

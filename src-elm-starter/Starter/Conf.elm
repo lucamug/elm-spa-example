@@ -136,12 +136,12 @@ encoder args =
                 ("http://localhost:" ++ String.fromInt args.portStatic)
           )
         , ( "batchesSize", Json.Encode.int 4 )
-        , ( "snapshots", Json.Encode.bool True )
         , ( "pagesName", Json.Encode.string "index.html" )
-        , ( "snapshotFileName", Json.Encode.string Main.conf.snapshotFileName )
-        , ( "snapshotWidth", Json.Encode.int Main.conf.snapshotWidth )
-        , ( "snapshotHeight", Json.Encode.int Main.conf.snapshotHeight )
+        , ( "snapshots", Json.Encode.bool True )
         , ( "snapshotsQuality", Json.Encode.int 80 )
+        , ( "snapshotWidth", Json.Encode.int <| Maybe.withDefault 700 <| String.toInt <| Maybe.withDefault "" <| args.flags.snapshotWidth )
+        , ( "snapshotHeight", Json.Encode.int <| Maybe.withDefault 350 <| String.toInt <| Maybe.withDefault "" <| args.flags.snapshotHeight )
+        , ( "snapshotFileName", Json.Encode.string Starter.ConfMeta.conf.fileNames.snapshot )
         , ( "mainConf", Starter.ConfMain.encoder Main.conf )
         , ( "htmlToReinject"
           , args.htmlToReinject
@@ -156,8 +156,9 @@ encoder args =
                 --
                 [ ( args.fileNames.manifestJson
                   , { iconSizes = args.iconsForManifest
-                    , themeColor = Main.conf.themeColor
-                    , title = Main.conf.title
+                    , themeColor = Starter.Flags.flagsToThemeColor args.flags
+                    , name = args.flags.name
+                    , nameLong = args.flags.nameLong
                     }
                         |> Starter.Manifest.manifest
                         |> Json.Encode.encode Starter.ConfMeta.conf.indentation
@@ -190,7 +191,7 @@ encoder args =
                 , ( args.fileNames.robotsTxt
                   , [ "User-agent: *"
                     , "Disallow:"
-                    , "Sitemap: " ++ Main.conf.domain ++ args.fileNames.sitemap
+                    , "Sitemap: " ++ args.flags.homepage ++ args.fileNames.sitemap
                     ]
                         |> String.join "\n"
                   )
@@ -198,7 +199,7 @@ encoder args =
                 -- "/sitemap.txt"
                 --
                 , ( args.fileNames.sitemap
-                  , String.join "\n" <| List.map (\url -> Main.conf.domain ++ url) Main.conf.urls
+                  , String.join "\n" <| List.map (\url -> args.flags.homepage ++ url) Main.conf.urls
                   )
                 ]
           )

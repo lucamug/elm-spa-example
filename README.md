@@ -5,6 +5,8 @@ Example of a website bootstrapped with `elm-spa` and `elm-starter`.
 * [`README-elm-spa.md`](README-elm-spa.md)
 * [`README-elm-starter.md`](https://github.com/lucamug/elm-starter)
 
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/lucamug/elm-spa-example)
+
 Compared to a regular `elm-starter` application, the commands have different name, to avoid conflicts with `elm-spa`:
 
 ```
