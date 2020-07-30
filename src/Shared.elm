@@ -82,6 +82,10 @@ view :
     -> Model
     -> Document msg
 view { page, toMsg } model =
+    let
+        _ =
+            Debug.log "view" ()
+    in
     { title = page.title
     , body =
         [ column

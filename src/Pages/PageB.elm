@@ -78,6 +78,10 @@ subscriptions model =
 
 view : Model -> Document Msg
 view model =
+    let
+        _ =
+            Debug.log "view PageB" ()
+    in
     { title = "PageB"
     , body =
         [ el [ Font.size 32 ] <| text "Page B"

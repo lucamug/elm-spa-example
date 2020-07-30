@@ -84,7 +84,7 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
+    case msg |> Debug.log "msg" of
         LinkClicked (Browser.Internal url) ->
             ( model
             , Nav.pushUrl model.shared.key (Url.toString url)
