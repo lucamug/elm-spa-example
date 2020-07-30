@@ -77,6 +77,11 @@ subscriptions model =
 -- VIEW
 
 
+lazy : Bool
+lazy =
+    False
+
+
 subView : Model -> Element Msg
 subView model =
     let
@@ -99,6 +104,10 @@ view model =
     , body =
         [ el [ Font.size 32 ] <| text "Page B"
         , text "Another counter:"
-        , Element.Lazy.lazy subView model
+        , if lazy then
+            Element.Lazy.lazy subView model
+
+          else
+            subView model
         ]
     }
