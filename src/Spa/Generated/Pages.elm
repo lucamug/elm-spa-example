@@ -102,23 +102,23 @@ bundle bigModel =
 
 
 view : Model -> Document Msg
-view model =
-    (bundle model).view ()
+view =
+    bundle >> .view
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    (bundle model).subscriptions ()
+subscriptions =
+    bundle >> .subscriptions
 
 
 save : Model -> Shared.Model -> Shared.Model
-save model =
-    (bundle model).save ()
+save =
+    bundle >> .save
 
 
 load : Model -> Shared.Model -> ( Model, Cmd Msg )
-load model =
-    (bundle model).load ()
+load =
+    bundle >> .load
 
 
 
@@ -133,10 +133,10 @@ type alias Upgraded params model msg =
 
 
 type alias Bundle =
-    { view : () -> Document Msg
-    , subscriptions : () -> Sub Msg
-    , save : () -> Shared.Model -> Shared.Model
-    , load : () -> Shared.Model -> ( Model, Cmd Msg )
+    { view : Document Msg
+    , subscriptions : Sub Msg
+    , save : Shared.Model -> Shared.Model
+    , load : Shared.Model -> ( Model, Cmd Msg )
     }
 
 
@@ -150,10 +150,10 @@ upgrade toModel toMsg page =
             page.update msg model |> Tuple.mapBoth toModel (Cmd.map toMsg)
 
         bundle_ model =
-            { view = \_ -> page.view model |> Document.map toMsg
-            , subscriptions = \_ -> page.subscriptions model |> Sub.map toMsg
-            , save = \_ -> page.save model
-            , load = \_ -> load_ model
+            { view = page.view model |> Document.map toMsg
+            , subscriptions = page.subscriptions model |> Sub.map toMsg
+            , save = page.save model
+            , load = load_ model
             }
 
         load_ model shared =
