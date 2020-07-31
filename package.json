@@ -31,7 +31,8 @@
         "elm-starter:build": "node ./src-elm-starter/starter.js build",
         "elm-starter:serverBuild": "node ./src-elm-starter/starter.js serverBuild",
         "surge1": "cd elm-stuff/elm-starter-files/dev && surge --domain testing-multiple-view-calls.surge.sh",
-        "surge2": "cd elm-stuff/elm-starter-files/dev && surge --domain testing-multiple-view-calls-with-lazy.surge.sh"
+        "surge2": "cd elm-stuff/elm-starter-files/dev && surge --domain testing-multiple-view-calls-with-lazy.surge.sh",
+        "surge3": "cd elm-stuff/elm-starter-files/dev && surge --domain testing-multiple-view-calls-with-fix.surge.sh"
     },
     "devDependencies": {
         "chokidar-cli": "2.1.0",
