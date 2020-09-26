@@ -5,6 +5,7 @@ import Html.String.Attributes exposing (..)
 import Html.String.Extra exposing (..)
 import Main
 import Starter.ConfMeta
+import Starter.FileNames
 import Starter.Flags
 import Starter.Icon
 import Starter.SnippetCss
@@ -14,6 +15,13 @@ import Starter.SnippetJavascript
 
 index : Starter.Flags.Flags -> Html msg
 index flags =
+    let
+        relative =
+            Starter.Flags.toRelative flags
+
+        fileNames =
+            Starter.FileNames.fileNames flags.version flags.commit
+    in
     html
         [ lang "en" ]
         [ head []
@@ -24,19 +32,29 @@ index flags =
                    , meta [ name "description", content flags.description ] []
                    , meta [ name "viewport", content "width=device-width, initial-scale=1, shrink-to-fit=no" ] []
                    , meta [ httpEquiv "x-ua-compatible", content "ie=edge" ] []
-                   , link [ rel "icon", href (Starter.Icon.iconFileName 64) ] []
-                   , link [ rel "apple-touch-icon", href (Starter.Icon.iconFileName 152) ] []
+                   , link [ rel "icon", href (Starter.Icon.iconFileName relative 64) ] []
+                   , link [ rel "apple-touch-icon", href (Starter.Icon.iconFileName relative 152) ] []
                    , style_ []
                         [ text <| """
                             body 
-                                { background-color: """ ++ Starter.Flags.flagsToThemeColor flags ++ """
+                                { background-color: """ ++ Starter.Flags.toThemeColor flags ++ """
                                 ; font-family: 'IBM Plex Sans', helvetica, sans-serif
                                 ; margin: 0px;
                                 }""" ]
                    ]
                 ++ Starter.SnippetHtml.messagesStyle
-                ++ Starter.SnippetHtml.pwa (Starter.Flags.flagsToThemeColor flags)
-                ++ Starter.SnippetHtml.previewCards flags Main.conf
+                ++ Starter.SnippetHtml.pwa
+                    { commit = flags.commit
+                    , relative = relative
+                    , themeColor = Starter.Flags.toThemeColor flags
+                    , version = flags.version
+                    }
+                ++ Starter.SnippetHtml.previewCards
+                    { commit = flags.commit
+                    , flags = flags
+                    , mainConf = Main.conf
+                    , version = flags.version
+                    }
             )
         , body [] <| htmlToReinject flags
         ]
@@ -44,6 +62,13 @@ index flags =
 
 htmlToReinject : Starter.Flags.Flags -> List (Html.String.Html msg)
 htmlToReinject flags =
+    let
+        relative =
+            Starter.Flags.toRelative flags
+
+        fileNames =
+            Starter.FileNames.fileNames flags.version flags.commit
+    in
     []
         -- Friendly message in case Javascript is disabled
         ++ (if flags.env == "dev" then
@@ -55,11 +80,11 @@ htmlToReinject flags =
         -- Initializing "window.ElmStarter"
         ++ [ script [] [ textUnescaped <| Starter.SnippetJavascript.metaInfo flags ] ]
         -- Loading Elm code
-        ++ [ Html.String.Extra.script [ Html.String.Attributes.src "/elm.js" ] [] ]
+        ++ [ script [ src (relative ++ fileNames.outputCompiledJsProd) ] [] ]
         -- Elm finished to load, de-activating the "Loading..." message
         -- ++ Starter.SnippetHtml.messageLoadingOff
         -- Loading utility for pretty console formatting
-        ++ Starter.SnippetHtml.prettyConsoleFormatting flags.env
+        ++ Starter.SnippetHtml.prettyConsoleFormatting relative flags.env
         -- Signature "Made with ❤ and Elm"
         ++ [ Html.String.Extra.script [] [ Html.String.textUnescaped Starter.SnippetJavascript.signature ] ]
         -- Let's start Elm!
@@ -98,4 +123,4 @@ htmlToReinject flags =
                 ]
            ]
         -- Register the Service Worker, we are a PWA!
-        ++ [ Html.String.Extra.script [] [ Html.String.textUnescaped Starter.SnippetJavascript.registerServiceWorker ] ]
+        ++ [ Html.String.Extra.script [] [ Html.String.textUnescaped (Starter.SnippetJavascript.registerServiceWorker relative) ] ]

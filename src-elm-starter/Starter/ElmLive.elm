@@ -2,7 +2,9 @@ module Starter.ElmLive exposing
     ( Compilation(..)
     , ElmLiveArgs
     , HotReload(..)
+    , Pushstate(..)
     , Reload(..)
+    , Ssl(..)
     , Verbose(..)
     , elmLive
     , encoder
@@ -18,10 +20,14 @@ type alias ElmLiveArgs =
     , port_ : Int
     , compilation : Compilation
     , verbose : Verbose
+    , pushstate : Pushstate
     , reload : Reload
     , hotReload : HotReload
+    , ssl : Ssl
     , elmFileToCompile : String
     , dirBin : String
+    , relative : String
+    , certificatesFolder : String
     }
 
 
@@ -46,17 +52,48 @@ type Verbose
     | VerboseNo
 
 
+type Pushstate
+    = PushstateYes
+    | PushstateNo
+
+
+type Ssl
+    = SslYes
+    | SslNo
+
+
 elmLive : ElmLiveArgs -> { command : String, parameters : List String }
 elmLive args =
-    { command = args.dirBin ++ "/elm-live"
+    -- { command = args.dirBin ++ "/elm-live"
+    { command = "node"
     , parameters =
-        [ args.elmFileToCompile
-        , "--pushstate"
+        [ "node_modules/.bin/elm-live"
+
+        -- [ "elm-live/bin/elm-live.js"
+        , args.elmFileToCompile
         , "--path-to-elm=" ++ args.dirBin ++ "/elm"
         , "--dir=" ++ args.dir
         , "--start-page=" ++ args.indexHtml
         , "--port=" ++ String.fromInt args.port_
         ]
+            ++ (case args.ssl of
+                    SslYes ->
+                        [ "--ssl"
+
+                        -- , "--ssl-cert=" ++ args.certificatesFolder ++ "/localhost.crt"
+                        -- , "--ssl-key=" ++ args.certificatesFolder ++ "/localhost.key"
+                        ]
+
+                    SslNo ->
+                        []
+               )
+            ++ (case args.pushstate of
+                    PushstateYes ->
+                        [ "--pushstate" ]
+
+                    PushstateNo ->
+                        []
+               )
             ++ (case args.verbose of
                     VerboseYes ->
                         [ "--verbose" ]
